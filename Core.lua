@@ -2,6 +2,7 @@ local addonName = ...
 local eventFrame = CreateFrame("Frame")
 local frames, hooked = {}, {}
 local db, applying, moving
+local Print
 
 local function InCombat()
     return InCombatLockdown and InCombatLockdown()
@@ -21,7 +22,7 @@ local function ValidPosition(p)
 end
 
 local function Apply(frame)
-    if not db or applying or moving == frame or InCombat() or not frame:IsShown() then return end
+    if not db or applying or moving == frame or not frame:IsShown() then return end
     local p = db.positions[BagKey(frame)]
     if not ValidPosition(p) then return end
     local scale = UIParent:GetEffectiveScale() / frame:GetEffectiveScale()
@@ -50,6 +51,24 @@ local function StopMoving()
     frame.moveBagsDragKey = nil
     moving = nil
     Apply(frame)
+end
+
+local function SetLocked(locked)
+    if InCombat() then Print("Try again after combat."); return end
+    StopMoving()
+    db.locked = locked
+    for frame in pairs(frames) do
+        frame.moveBagsHandle:EnableMouse(not db.locked and BagKey(frame) ~= nil)
+    end
+    Print(db.locked and "Positions locked." or "Drag bag titles to move them.")
+end
+
+local function ResetPositions()
+    if InCombat() then Print("Try again after combat."); return end
+    StopMoving()
+    db.positions = {}
+    if UpdateContainerFrameAnchors then UpdateContainerFrameAnchors() end
+    Print("Positions reset.")
 end
 
 local function Attach(frame)
@@ -86,7 +105,7 @@ local function Attach(frame)
     handle:SetScript("OnEnter", function()
         GameTooltip:SetOwner(handle, "ANCHOR_TOP")
         GameTooltip:SetText("Simple Bag Mover")
-        GameTooltip:AddLine("Drag to move. /sbm lock to lock positions.", 1, 1, 1)
+        GameTooltip:AddLine("Drag to move. Use /sbm lock to lock positions.", 1, 1, 1)
         GameTooltip:Show()
     end)
     handle:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -116,7 +135,7 @@ local function Refresh()
     end
 end
 
-local function Print(message)
+Print = function(message)
     print("|cff66ccffSimple Bag Mover:|r " .. message)
 end
 
@@ -126,23 +145,18 @@ local function Command(input)
         local version, build, _, interface = GetBuildInfo()
         local count = 0
         for _ in pairs(frames) do count = count + 1 end
-        Print(string.format("0.1.2; client %s (%s); interface %s; project %s; frames %d; layout hook %s",
+        Print(string.format("0.1.3; client %s (%s); interface %s; project %s; frames %d; layout hook %s",
             tostring(version), tostring(build), tostring(interface), tostring(WOW_PROJECT_ID), count,
             tostring(hooked.UpdateContainerFrameAnchors or false)))
     elseif command == "lock" or command == "unlock" or command == "reset" then
         if InCombat() then Print("Try again after combat."); return end
-        StopMoving()
         if command == "reset" then
-            db.positions = {}
-            if UpdateContainerFrameAnchors then UpdateContainerFrameAnchors() end
-            Print("Positions reset.")
+            ResetPositions()
         else
-            db.locked = command == "lock"
-            Print(db.locked and "Positions locked." or "Drag bag titles to move them.")
+            SetLocked(command == "lock")
         end
-        Refresh()
     else
-        Print("Drag bag titles to move them. /sbm lock, /sbm unlock, /sbm reset, /sbm debug")
+        Print("/sbm lock, /sbm unlock, /sbm reset, /sbm debug")
     end
 end
 

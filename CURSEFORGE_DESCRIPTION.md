@@ -24,4 +24,4 @@ Drag a bag by its title area to place it where you want. Each bag remembers its 
 
 Built exclusively for WoW Forever and its default Blizzard bags. Bank bags are currently outside the addon's scope.
 
-Moving and position restoration pause during combat. Saved positions are reapplied after combat ends.
+Dragging and settings changes pause during combat. Saved positions remain active.

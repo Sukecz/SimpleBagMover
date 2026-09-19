@@ -2,6 +2,7 @@ local events = {}
 local combat = false
 local methods = {}
 function methods:GetID() return self.id or 0 end
+function methods:GetParent() return self.parent end
 function methods:SetID(id) self.id = id end
 function methods:IsShown() return self.shown ~= false end
 function methods:GetEffectiveScale() return self.scale or 1 end
@@ -28,7 +29,11 @@ function methods:HookScript(name, fn) self.scripts[name] = fn end
 function methods:RegisterEvent(event) events[event] = self end
 function methods:StartMoving() self.moving = true end
 function methods:StopMovingOrSizing() self.moving = false end
-function CreateFrame() return setmetatable({scripts = {}}, {__index = methods}) end
+function CreateFrame(_, name, parent)
+    local frame = setmetatable({scripts = {}, parent = parent}, {__index = methods})
+    if name then _G[name] = frame end
+    return frame
+end
 function hooksecurefunc(target, name, fn)
     if type(target) == 'string' then fn, name, target = name, target, _G end
     local old = target[name]
@@ -74,10 +79,12 @@ frame:SetID(0)
 assert(frame.point[4] == 300)
 frame:SetScale(.8)
 assert(frame.point[4] == 375)
--- Protected combat periods defer restoration until combat ends.
+-- Saved positions remain active in combat, while dragging stays blocked.
 combat = true
 UpdateContainerFrameAnchors()
-assert(frame.point[1] == 'BOTTOMRIGHT')
+assert(frame.point[1] == 'CENTER' and frame.point[4] == 375)
+handle.scripts.OnDragStart()
+assert(not frame.moving)
 combat = false
 event('PLAYER_REGEN_ENABLED')
 assert(frame.point[1] == 'CENTER')
@@ -86,13 +93,20 @@ handle.scripts.OnDragStart()
 assert(not frame.moving and not handle.mouse)
 SlashCmdList.SIMPLEBAGMOVER('unlock')
 assert(handle.mouse)
+SlashCmdList.SIMPLEBAGMOVER('reset')
+assert(next(SimpleBagMoverDB.positions) == nil)
+frame:SetScale(1)
+frame.x, frame.y = 300, 250
+handle.scripts.OnDragStart()
+handle.scripts.OnDragStop()
 -- A fresh runtime must restore the same SavedVariables table.
 local saved = SimpleBagMoverDB
 ContainerFrame1, ContainerFrame2 = CreateFrame(), CreateFrame()
 ContainerFrame2.id = 1
 assert(loadfile('Core.lua'))('SimpleBagMover')
 event('ADDON_LOADED', 'SimpleBagMover')
-assert(SimpleBagMoverDB == saved and ContainerFrame1.point[4] == 300)
+assert(SimpleBagMoverDB == saved)
+assert(ContainerFrame1.point[4] == 300, tostring(ContainerFrame1.point[4]))
 UIParent.width = 2000
 event('DISPLAY_SIZE_CHANGED')
 assert(ContainerFrame1.point[4] == 600)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2026-09-19
+
+- Kept saved bag positions active during combat while continuing to block dragging and settings changes.
+
 ## 0.1.2 - 2026-09-19
 
 - Added movable default Blizzard bag windows for WoW Forever.

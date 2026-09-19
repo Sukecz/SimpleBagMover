@@ -1,17 +1,17 @@
 # Simple Bag Mover
 
-A lightweight Blizzard bag mover for **WoW Forever only**, pilot version 0.1.2.
+A lightweight Blizzard bag mover for **WoW Forever only**.
 Drag the title area of an open bag to move it. Positions are saved per character
 and logical bag slot across closing/reopening, logout and `/reload`.
 
 - `/sbm lock` — disable dragging; saved positions remain active.
-- `/sbm unlock` — enable dragging (default).
-- `/sbm reset` — clear saved positions and restore Blizzard layout.
+- `/sbm unlock` — enable dragging.
+- `/sbm reset` — clear saved positions and restore the Blizzard layout.
 - `/sbm debug` — print client and hook diagnostics.
 
 No libraries, item automation or bag replacement. Bank bags are outside this pilot's
 scope. Combined bag support is capability-based and still needs live verification.
-Moving and restoring positions is suspended during combat and resumed afterward.
+Dragging and settings changes are suspended during combat; saved positions remain active.
 Screen-relative positions adapt to resolution/UI scale; frames are clamped on screen.
 
 ## Development and deployment

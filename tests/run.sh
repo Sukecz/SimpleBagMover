@@ -10,7 +10,7 @@ from pathlib import Path
 p = Path('SimpleBagMover_Camelot.toc')
 s = p.read_text()
 assert '## Interface: 16001' in s
-assert '## Version: 0.1.2' in s
+assert '## Version: 0.1.3' in s
 assert '## SavedVariablesPerCharacter: SimpleBagMoverDB, MoveBagsDB' in s
 assert '## X-Curse-Project-ID: 1702845' in s
 assert '## X-Flavor: Forever' in s
