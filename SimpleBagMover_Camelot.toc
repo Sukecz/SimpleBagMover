@@ -1,0 +1,12 @@
+## Interface: 16001
+## Title: Simple Bag Mover
+## Notes: Move Blizzard bags and remember their positions. Forever only.
+## Author: msminipc
+## Version: 0.1.2
+## SavedVariablesPerCharacter: SimpleBagMoverDB, MoveBagsDB
+## X-Curse-Project-ID: 1702845
+## X-Flavor: Forever
+## AllowLoadGameType: camelot
+## IconTexture: Interface\AddOns\SimpleBagMover\assets\addon-icon.tga
+
+Core.lua

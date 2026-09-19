@@ -1,0 +1,16 @@
+package-as: SimpleBagMover
+manual-changelog: CHANGELOG.md
+
+ignore:
+  - .git
+  - .github
+  - .release
+  - .gitignore
+  - AGENTS.md
+  - CURSEFORGE_DESCRIPTION.md
+  - tests
+  - tools
+  - build
+  - assets/addon-icon.png
+  - assets/README.md
+  - "*.code-workspace"
